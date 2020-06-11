@@ -1,5 +1,6 @@
 __pycache__
 .ipynb_checkpoints/
+.tipsy_history
 dist/
 build/
 *.egg
