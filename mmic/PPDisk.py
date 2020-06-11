@@ -8,18 +8,17 @@ class PPDisk(ICs):
     
     '''
     def __init__(self,units='CGS'):
-        
         self._set_units(units)
         self._set_volume()
         
         # Disk Parameters (with default values)
-        self.rhoPower = -1.0                       # Radial density profile power
-        self.tempPower = -0.5                      # Temperature profile power
-        self.rout = 1.0*self.AU.value              # Outer radius in AU
-        self.rin = 0.3*self.AU.value               # Inner radius of the disk in AU
-        self.Mstar = 1./3.*self.Msol.value         # Mass of the star
-        self.T0 = 150.                             # Central temperature
-        self.sigma0 = (48000 * self.sDens).value   # Central surface density
+        self.rhoPower = -1.0                           # Radial density profile power
+        self.tempPower = -0.5                          # Temperature profile power
+        self.rout = None #1.0*self.AU.value            # Outer radius in AU
+        self.rin = None #0.3*self.AU.value             # Inner radius of the disk in AU
+        self.Mstar = None #1./3.*self.Msol.value       # Mass of the star
+        self.T0 = None #150.                           # Central temperature
+        self.sigma0 = None #(48000 * self.sDens).value # Central surface density
     
     def makeIC(self,filename='snapshot.std',output=True):
         '''Generate tipsy snapshot'''
@@ -59,7 +58,16 @@ class PPDisk(ICs):
         print('Done.\nWritten to: {0}'.format(filename))
     
     def makeDisk(self,doBC = False): 
-        """Populate disk particles with rho, temp, vel."""
+        '''Populate disk particles with rho, temp, vel.'''
+        
+        self._check_box_params()
+        self._check_disk_params()
+        
+        try:
+            self.points
+        except:
+            print('Generating initial mesh points...')
+            self._generate_mesh_points()
         
         self.doBC = doBC
         posArray = self.points
@@ -173,3 +181,14 @@ class PPDisk(ICs):
         shape[np.logical_and(rltrout, r_mod > rout),2] = 1e30
 
         return shape
+
+    def _check_disk_params(self):
+        '''Check that the disk params are set'''
+        assert self.rhoPower, 'rhoPower not set!'
+        assert self.tempPower, 'tempPower not set!'
+        assert self.rout, 'rout not set!'
+        assert self.rin, 'rin not set!'
+        assert self.Mstar, 'Mstar not set!'
+        assert self.T0, 'T0 not set!'
+        assert self.sigma0, 'sigma0 not set!'
+        

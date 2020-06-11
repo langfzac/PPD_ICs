@@ -17,11 +17,11 @@ class ICs:
     def _set_volume(self):
         # Need to make adjustable
         # Volume parameters (with default values)
-        self.X = 25.*self.AU.value 
-        self.Y = 25.*self.AU.value
-        self.Z = 25.*self.AU.value
-        self.rhoAtm = (1e-26 * self.vDens).value  # Volume Density
-        self.tempAtm = 600                        # Temperature in Kelvin
+        self.X = None #25.*self.AU.value 
+        self.Y = None #25.*self.AU.value
+        self.Z = None #25.*self.AU.value
+        self.rhoAtm = (1e-30 * self.vDens).value  # Volume Density
+        self.tempAtm = 1000                       # Temperature in Kelvin
     
     def _set_units(self,units='cgs'):
         _units = ['cgs','CGS']
@@ -125,7 +125,12 @@ class ICs:
                     ipart = ipart + 1
 
         return pos
-
+    
+    def _check_box_params(self):
+        assert self.X, 'Box X not set!'
+        assert self.Y, 'Box Y not set!'
+        assert self.Z, 'Box Z not set!'
+        
 # Some utilites for makeGlassTile().
 def swap_endian(i):
     return struct.unpack("<I", struct.pack(">I",i))[0]
